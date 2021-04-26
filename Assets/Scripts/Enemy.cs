@@ -1,111 +1,55 @@
-﻿using UnityEngine;
+using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public abstract class Enemy : MonoBehaviour
 {
-    [SerializeField] private Transform left;
-    [SerializeField] private Transform right;
-    [SerializeField] private Transform checkGroundPoint;
-    [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private float speed;
-    [SerializeField] private float jumpForce;
+    [SerializeField] protected float speed;
+    [SerializeField] private GameObject deathSfx;
 
-    private Rigidbody2D rigidbody2D;
-    private Animator animator;
+    protected Rigidbody2D rigibody2d;
+    protected Animator anim;
+    private CapsuleCollider2D collider2D;
+    private SpriteRenderer sp;
 
-    private bool onGround;
-    private bool faceRight = false;
-    private float leftX;
-    private float rightX;
-    private static readonly int jump = Animator.StringToHash("Jump");
-    private static readonly int fall = Animator.StringToHash("Fall");
+    protected bool dead;
 
-    private void Start()
+    void Start()
     {
-        rigidbody2D = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
+        rigibody2d = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
+        collider2D = GetComponent<CapsuleCollider2D>();
+        sp = GetComponent<SpriteRenderer>();
 
-        leftX = left.position.x;
-        rightX = right.position.x;
+        Init();
     }
 
-    private void Update()
+    protected abstract void Init();
+
+    protected abstract void Move();
+
+    protected virtual void ChangeDir()
     {
-        CheckOnGround();
-        Debug.Log(onGround);
-        Move();
-        SwitchAnim();
     }
 
-    private void CheckOnGround()
+    protected virtual void SwitchAnim()
     {
-        onGround = false;
-        //检测是否在地面
-        Collider2D[] colliders =
-            Physics2D.OverlapBoxAll(checkGroundPoint.position, new Vector2(1, 0.2f), 0, groundLayer);
-        for (int i = 0; i < colliders.Length; i++)
-        {
-            if (colliders[i].transform != transform)
-            {
-                onGround = true;
-                break;
-            }
-        }
     }
 
-    private void Move()
+    public void OnDeath()
     {
-        if (faceRight)
-        {
-            if (onGround)
-            {
-                rigidbody2D.velocity = new Vector2(speed, jumpForce);
-
-//                rigidbody2D.AddForce(new Vector2(0, jumpForce), ForceMode2D.Force);
-                animator.SetBool(jump, true);
-            }
-//            rigidbody2D.velocity = new Vector2(speed, rigidbody2D.velocity.y);
-
-            if (transform.position.x >= rightX)
-            {
-                ChangeDir();
-            }
-        }
-        else
-        {
-            if (onGround)
-            {
-                rigidbody2D.velocity = new Vector2(-speed, jumpForce);
-//                rigidbody2D.AddForce(new Vector2(0, jumpForce), ForceMode2D.Force);
-                animator.SetBool(jump, true);
-            }
-
-            if (transform.position.x <= leftX)
-            {
-                ChangeDir();
-            }
-        }
+        dead = true;
+        Invoke(nameof(DisableCollider), 0.2f);
+        sp.enabled = false;
+        deathSfx.SetActive(true);
+        Invoke(nameof(DisableDeathSfx), 0.5f);
     }
 
-    private void ChangeDir()
+    private void DisableCollider()
     {
-        faceRight = !faceRight;
-        transform.localScale = Vector3.Scale(transform.localScale, new Vector3(-1, 1, 1));
+        collider2D.enabled = false;
     }
 
-    private void SwitchAnim()
+    private void DisableDeathSfx()
     {
-        if (animator.GetBool(jump))
-        {
-            if (rigidbody2D.velocity.y < 0)
-            {
-                animator.SetBool(jump, false);
-                animator.SetBool(fall, true);
-            }
-        }
-
-        if (onGround)
-        {
-            animator.SetBool(fall, false);
-        }
+        deathSfx.SetActive(false);
     }
 }

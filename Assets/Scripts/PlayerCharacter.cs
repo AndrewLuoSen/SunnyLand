@@ -169,4 +169,9 @@ public class PlayerCharacter : MonoBehaviour
             }
         }
     }
+
+    public void AddItemCount()
+    {
+        
+    }
 }
