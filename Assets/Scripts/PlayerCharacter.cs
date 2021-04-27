@@ -133,15 +133,6 @@ public class PlayerCharacter : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Collection"))
-        {
-            collectionCount++;
-            Destroy(other.gameObject);
-        }
-    }
-
     private void OnCollisionEnter2D(Collision2D other)
     {
         if (other.collider.CompareTag("Enemy"))
@@ -149,7 +140,12 @@ public class PlayerCharacter : MonoBehaviour
             //从空中下落碰撞 kill怪物
             if (animator.GetBool(fall) && !onGround)
             {
-                Destroy(other.gameObject);
+                other.transform.GetComponent<Enemy>().OnDeath();
+                Vector2 velocity = rigidbody.velocity;
+                velocity.y = 0;
+                rigidbody.velocity = velocity;
+                rigidbody.AddForce(new Vector2(0, jumpForce*0.7f));
+                animator.SetBool(jump, true);   
             }
             else
             {
@@ -159,12 +155,12 @@ public class PlayerCharacter : MonoBehaviour
                     //需要考虑什么时候重置 isHurt：当
                     //同时 isHurt要把move给禁用掉,不然反弹无效
                     isHurt = true;
-                    rigidbody.velocity = new Vector2(-speed, rigidbody.velocity.y);
+                    rigidbody.velocity = new Vector2(-speed / 2f, rigidbody.velocity.y);
                 }
                 else
                 {
                     isHurt = true;
-                    rigidbody.velocity = new Vector2(speed, rigidbody.velocity.y);
+                    rigidbody.velocity = new Vector2(speed / 2f, rigidbody.velocity.y);
                 }
             }
         }
@@ -172,6 +168,5 @@ public class PlayerCharacter : MonoBehaviour
 
     public void AddItemCount()
     {
-        
     }
 }

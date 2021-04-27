@@ -15,6 +15,7 @@ public class EnemyInclinedPlaneMove : EnemyIdleMove
         if (CheckForwardIsGround())
         {
             RaycastHit2D hitInfo = GetHitInfo();
+            //将正上方设置为斜面的法向量
             transform.up = hitInfo.normal;
             if (hitInfo.normal == Vector2.up)
             {

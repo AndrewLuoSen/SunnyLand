@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Collection
   - Enemy
+  - Item
+  - House
   layers:
   - Default
   - TransparentFX

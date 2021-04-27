@@ -2,9 +2,10 @@
 
 public class Item : MonoBehaviour
 {
+    public GameObject feedbackSfx;
+
     private SpriteRenderer sp;
     private BoxCollider2D collider;
-    private GameObject feedbackSfx;
 
     private void Start()
     {
@@ -21,7 +22,7 @@ public class Item : MonoBehaviour
             sp.enabled = false;
             collider.enabled = false;
             feedbackSfx.SetActive(true);
-            Invoke(nameof(DisableFeedbackSfx), 0.5f);//记得改时间
+            Invoke(nameof(DisableFeedbackSfx), 0.5f);
         }
     }
 

@@ -24,7 +24,7 @@ public class EnemyIdleMove : EnemyFrog
 
     protected bool CheckForwardIsGround()
     {
-        var hit = Physics2D.Raycast(groundCheckPoint.position + transform.right * dir, Vector2.down, 0.5f, groundLayer);
+        var hit = Physics2D.Raycast(groundCheckPoint.position + transform.right * dir, Vector2.down, 1f, groundLayer);
         if (hit.collider == null)
         {
             dir *= -1;

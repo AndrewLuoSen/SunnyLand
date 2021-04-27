@@ -37,15 +37,10 @@ public abstract class Enemy : MonoBehaviour
     public void OnDeath()
     {
         dead = true;
-        Invoke(nameof(DisableCollider), 0.2f);
+        collider2D.enabled = false;
         sp.enabled = false;
         deathSfx.SetActive(true);
         Invoke(nameof(DisableDeathSfx), 0.5f);
-    }
-
-    private void DisableCollider()
-    {
-        collider2D.enabled = false;
     }
 
     private void DisableDeathSfx()
